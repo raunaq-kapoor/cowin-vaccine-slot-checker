@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Spyder Editor
+
+This is a temporary script file.
+"""
+
 import datetime
 import os
 import platform
@@ -9,7 +16,7 @@ import requests
 
 class SlotChecker:
     def __init__(self):
-        self.DISTRICT_IDS = [(294, "BBMP"), (265, "Bengaluru Urban")]
+        self.DISTRICT_IDS = [(188, "Gurgaon")] # (149, "South Delhi") #
         self.NUM_WEEKS = 5
         self.DATES = []
         self.URL = "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict?district_id={}&date={}"
@@ -17,11 +24,11 @@ class SlotChecker:
         self.ALARM = True
         self.FILE_NAME = "vaccine.txt"
         self.MIN_AGE = 18
-        self.MIN_CAPACITY = 0
+        self.MIN_CAPACITY = 1
 
         now = datetime.datetime.now()
-        for i in range(5):
-            target_time = now + datetime.timedelta(days=7 * i)
+        for i in range(60):
+            target_time = now + datetime.timedelta(days=1 * i)
             self.DATES.append(target_time.strftime("%d-%m-%Y"))
 
     def check_free_slots(self, data):
@@ -31,8 +38,8 @@ class SlotChecker:
             for session in center['sessions']:
                 if session['min_age_limit'] == self.MIN_AGE and session['available_capacity'] > self.MIN_CAPACITY:
                     free_slots.append(
-                        "{} - {} - {} - {} - {}".format(center['name'], center['district_name'], session['date'],
-                                                        center['fee_type'], session['vaccine']))
+                        "{} - {} - {} - {} - {} - {}".format(center['name'], center['district_name'], session['date'],
+                                                        center['fee_type'], session['vaccine'], session['available_capacity']))
         return free_slots
 
     def write_to_file(self, slots):
